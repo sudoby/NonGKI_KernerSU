@@ -277,7 +277,7 @@ jobs:
             if [[ "${{ env.SUSFS_FIXED }}" == true ]]; then
               PATCHES_SOURCE=JackA1ltman/NonGKI_Kernel_Patches
               PATCHES_BRANCH=op_kernel
-              git clone https://github.com/$PATCHES_SOURCE.git -b $PATCHES_BRANCH NonGKI_Kernel_Patches --depth=1 # It's not necessary.
+              git clone git clone https://github.com/JackA1ltman/NonGKI_Kernel_Patches.git -b $PATCHES_BRANCH NonGKI_Kernel_Patches --depth=1 # It's not necessary.
             fi
             git clone $SUSFS_SOURCE -b $SUSFS_BRANCH susfs4ksu --depth=1
             cp susfs4ksu/kernel_patches/fs/* fs/
