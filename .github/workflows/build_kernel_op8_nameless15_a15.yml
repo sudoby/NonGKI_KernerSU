@@ -38,6 +38,7 @@ jobs:
               KERNELSU_SOURCE
               KERNELSU_BRANCH
               KERNELSU_NAME
+              SUSFS_HUB 
               SUSFS_ENABLE
               SUSFS_FIXED
               SUSFS_UPDATE
@@ -193,6 +194,14 @@ jobs:
           fi
           echo "KERNEL_VERSION=$(head -n 3 device_kernel/Makefile | grep -E 'VERSION|PATCHLEVEL' | awk '{print $3}' | paste -sd '.')" >> $GITHUB_ENV
 
+      - name: SUSFS SU
+        run: |
+          cd $GITHUB_WORKSPACE/device_kernel
+          git clone https://github.com/WildKernels/kernel_patches.git
+          cp -r ./kernel_patches/next/0001-kernel-implement-susfs-v1.5.5-v1.5.7-KSUN-v1.0.8.patch ${{ env.KERNELSU_NAME }}/kernel/
+          cd ${{ env.KERNELSU_NAME }}/kernel
+          patch -p1 < 0001-kernel-implement-susfs-v1.5.5-v1.5.7-KSUN-v1.0.8.patch
+
       - name: Set KSU and SUSFS for DEFCONFIG
         run: |
           cd $GITHUB_WORKSPACE/device_kernel
@@ -205,6 +214,7 @@ jobs:
             echo "CONFIG_KSU_SUSFS=y" >> ./arch/arm64/configs/${{ env.DEFCONFIG_NAME }}
             echo "CONFIG_KSU_SUSFS_SUS_SU=n" >> ./arch/arm64/configs/${{ env.DEFCONFIG_NAME }}
             echo "CONFIG_KSU_SUSFS_HAS_MAGIC_MOUNT=y" >> ./arch/arm64/configs/${{ env.DEFCONFIG_NAME }}
+            echo "CONFIG_KSU_WITH_KPOBES=n" >> ./arch/arm64/configs/${{ env.DEFCONFIG_NAME }}
             echo "CONFIG_KSU_SUSFS_SUS_PATH=y" >> ./arch/arm64/configs/${{ env.DEFCONFIG_NAME }}
             echo "CONFIG_KSU_SUSFS_SUS_MOUNT=y" >> ./arch/arm64/configs/${{ env.DEFCONFIG_NAME }}
             echo "CONFIG_KSU_SUSFS_AUTO_ADD_SUS_KSU_DEFAULT_MOUNT=y" >> ./arch/arm64/configs/${{ env.DEFCONFIG_NAME }}
