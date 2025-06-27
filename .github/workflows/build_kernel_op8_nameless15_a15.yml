@@ -194,14 +194,6 @@ jobs:
           fi
           echo "KERNEL_VERSION=$(head -n 3 device_kernel/Makefile | grep -E 'VERSION|PATCHLEVEL' | awk '{print $3}' | paste -sd '.')" >> $GITHUB_ENV
 
-      - name: SUSFS SU
-        run: |
-          cd $GITHUB_WORKSPACE/device_kernel
-          git clone https://github.com/WildKernels/kernel_patches.git
-          cp -r ./kernel_patches/next/0001-kernel-implement-susfs-v1.5.5-v1.5.7-KSUN-v1.0.8.patch ${{ env.KERNELSU_NAME }}/kernel/
-          cd ${{ env.KERNELSU_NAME }}/kernel
-          patch -p1 < 0001-kernel-implement-susfs-v1.5.5-v1.5.7-KSUN-v1.0.8.patch
-
       - name: Set KSU and SUSFS for DEFCONFIG
         run: |
           cd $GITHUB_WORKSPACE/device_kernel
@@ -271,6 +263,14 @@ jobs:
           echo "KERNELSU_METHOD=$KERNELSU_METHOD" >> $GITHUB_ENV
           KSU_VERSION=$(cd ${{ env.KERNELSU_NAME }} && expr $(/usr/bin/git rev-list --count HEAD) + 10200)
           echo "UPLOADNAME=-${{ env.KERNELSU_NAME }}_$KSU_VERSION" >> $GITHUB_ENV
+
+      - name: SUSFS SU
+        run: |
+          cd $GITHUB_WORKSPACE/device_kernel
+          git clone https://github.com/WildKernels/kernel_patches.git
+          cp -r ./kernel_patches/next/0001-kernel-implement-susfs-v1.5.5-v1.5.7-KSUN-v1.0.8.patch ${{ env.KERNELSU_NAME }}/kernel/
+          cd ${{ env.KERNELSU_NAME }}/kernel
+          patch -p1 < 0001-kernel-implement-susfs-v1.5.5-v1.5.7-KSUN-v1.0.8.patch
 
           # Set SUSFS
           if [[ "${{ env.SUSFS_ENABLE }}" == true ]]; then
